@@ -1,10 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${colaborador.id != null} ? 'Editar Colaborador' : 'Novo Colaborador'">Future Work</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<div th:replace="fragments/header :: header"></div>
 
+<main class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 th:text="${colaborador.id != null} ? 'Editar Colaborador' : 'Novo Colaborador'"
+                        class="mb-0"></h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/colaboradores/salvar}" th:object="${colaborador}" method="post">
+                        <input type="hidden" th:field="*{id}" />
+
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="nome" th:field="*{nome}"
+                                   required maxlength="100" />
+                            <div th:if="${#fields.hasErrors('nome')}" class="text-danger">
+                                <small th:errors="*{nome}"></small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}"
+                                   required />
+                            <div th:if="${#fields.hasErrors('email')}" class="text-danger">
+                                <small th:errors="*{email}"></small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="habilidades" class="form-label">Habilidades *</label>
+                            <textarea class="form-control" id="habilidades" th:field="*{habilidades}"
+                                      rows="3" required maxlength="500"></textarea>
+                            <div class="form-text">
+                                Liste as principais habilidades separadas por vírgula
+                            </div>
+                            <div th:if="${#fields.hasErrors('habilidades')}" class="text-danger">
+                                <small th:errors="*{habilidades}"></small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="modeloTrabalho" class="form-label">Modelo de Trabalho *</label>
+                                <select class="form-select" id="modeloTrabalho" th:field="*{modeloTrabalho}"
+                                        required>
+                                    <option value="">Selecione...</option>
+                                    <option th:each="modelo : ${modelosTrabalho}"
+                                            th:value="${modelo}"
+                                            th:text="${modelo}"></option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('modeloTrabalho')}" class="text-danger">
+                                    <small th:errors="*{modeloTrabalho}"></small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="nivelIA" class="form-label">Nível de IA *</label>
+                                <select class="form-select" id="nivelIA" th:field="*{nivelIA}" required>
+                                    <option value="">Selecione...</option>
+                                    <option th:each="nivel : ${niveisIA}"
+                                            th:value="${nivel}"
+                                            th:text="${nivel}"></option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('nivelIA')}" class="text-danger">
+                                    <small th:errors="*{nivelIA}"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a th:href="@{/colaboradores}" class="btn btn-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <span th:text="${colaborador.id != null} ? 'Atualizar' : 'Criar'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
