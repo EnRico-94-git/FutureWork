@@ -1,7 +1,8 @@
 package com.example.FutureWork.repository;
 
-import com.futurework.model.Colaborador;
-import com.futurework.model.ModeloTrabalho;
+
+import com.example.FutureWork.model.Colaborador;
+import com.example.FutureWork.model.ModeloTrabalho;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

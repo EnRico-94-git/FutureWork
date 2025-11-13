@@ -1,10 +1,11 @@
 package com.example.FutureWork.service;
 
-import com.futurework.model.Colaborador;
-import com.futurework.model.ModeloTrabalho;
-import com.futurework.model.NivelIA;
-import com.futurework.dto.ColaboradorDTO;
-import com.futurework.repository.ColaboradorRepository;
+
+import com.example.FutureWork.dto.ColaboradorDTO;
+import com.example.FutureWork.model.Colaborador;
+import com.example.FutureWork.model.ModeloTrabalho;
+import com.example.FutureWork.model.NivelIA;
+import com.example.FutureWork.repository.ColaboradorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
