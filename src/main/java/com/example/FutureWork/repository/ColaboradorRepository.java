@@ -1,6 +1,5 @@
 package com.example.FutureWork.repository;
 
-
 import com.example.FutureWork.model.Colaborador;
 import com.example.FutureWork.model.ModeloTrabalho;
 import org.springframework.data.domain.Page;
