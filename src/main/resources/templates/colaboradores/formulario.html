@@ -18,75 +18,134 @@
                         class="mb-0"></h4>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/colaboradores/salvar}" th:object="${colaborador}" method="post">
+                    <!-- 🔧 CORREÇÃO: Adicionar th:action e th:object corretamente -->
+                    <form th:action="@{/colaboradores/salvar}"
+                          th:object="${colaborador}"
+                          method="post"
+                          id="formColaborador">
+
+                        <!-- Campo hidden para ID (importante para edição) -->
                         <input type="hidden" th:field="*{id}" />
 
+                        <!-- 🔧 MENSAGEM DE ERRO GERAL -->
+                        <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span th:text="${erro}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <!-- Nome -->
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome *</label>
-                            <input type="text" class="form-control" id="nome" th:field="*{nome}"
-                                   required maxlength="100" />
-                            <div th:if="${#fields.hasErrors('nome')}" class="text-danger">
-                                <small th:errors="*{nome}"></small>
+                            <input type="text"
+                                   class="form-control"
+                                   id="nome"
+                                   th:field="*{nome}"
+                                   th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid' : ''"
+                                   required
+                                   minlength="2"
+                                   maxlength="100"
+                                   placeholder="Digite o nome completo" />
+                            <div th:if="${#fields.hasErrors('nome')}" class="invalid-feedback">
+                                <span th:errors="*{nome}"></span>
                             </div>
                         </div>
 
+                        <!-- Email -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" th:field="*{email}"
-                                   required />
-                            <div th:if="${#fields.hasErrors('email')}" class="text-danger">
-                                <small th:errors="*{email}"></small>
+                            <input type="email"
+                                   class="form-control"
+                                   id="email"
+                                   th:field="*{email}"
+                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                   required
+                                   placeholder="exemplo@email.com" />
+                            <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
+                                <span th:errors="*{email}"></span>
                             </div>
                         </div>
 
+                        <!-- Habilidades -->
                         <div class="mb-3">
                             <label for="habilidades" class="form-label">Habilidades *</label>
-                            <textarea class="form-control" id="habilidades" th:field="*{habilidades}"
-                                      rows="3" required maxlength="500"></textarea>
+                            <textarea class="form-control"
+                                      id="habilidades"
+                                      th:field="*{habilidades}"
+                                      th:classappend="${#fields.hasErrors('habilidades')} ? 'is-invalid' : ''"
+                                      rows="3"
+                                      required
+                                      maxlength="500"
+                                      placeholder="Ex: Java, Spring Boot, Oracle, Docker"></textarea>
                             <div class="form-text">
-                                Liste as principais habilidades separadas por vírgula
+                                Liste as principais habilidades separadas por vírgula (máximo 500 caracteres)
                             </div>
-                            <div th:if="${#fields.hasErrors('habilidades')}" class="text-danger">
-                                <small th:errors="*{habilidades}"></small>
+                            <div th:if="${#fields.hasErrors('habilidades')}" class="invalid-feedback">
+                                <span th:errors="*{habilidades}"></span>
                             </div>
                         </div>
 
                         <div class="row">
+                            <!-- Modelo de Trabalho -->
                             <div class="col-md-6 mb-3">
                                 <label for="modeloTrabalho" class="form-label">Modelo de Trabalho *</label>
-                                <select class="form-select" id="modeloTrabalho" th:field="*{modeloTrabalho}"
+                                <!-- 🔧 CORREÇÃO CRÍTICA: th:value="${modelo.name()}" -->
+                                <select class="form-select"
+                                        id="modeloTrabalho"
+                                        th:field="*{modeloTrabalho}"
+                                        th:classappend="${#fields.hasErrors('modeloTrabalho')} ? 'is-invalid' : ''"
                                         required>
                                     <option value="">Selecione...</option>
                                     <option th:each="modelo : ${modelosTrabalho}"
-                                            th:value="${modelo}"
-                                            th:text="${modelo}"></option>
+                                            th:value="${modelo.name()}"
+                                            th:text="${modelo.name()}"></option>
                                 </select>
-                                <div th:if="${#fields.hasErrors('modeloTrabalho')}" class="text-danger">
-                                    <small th:errors="*{modeloTrabalho}"></small>
+                                <div th:if="${#fields.hasErrors('modeloTrabalho')}" class="invalid-feedback">
+                                    <span th:errors="*{modeloTrabalho}"></span>
                                 </div>
                             </div>
 
+                            <!-- Nível de IA -->
                             <div class="col-md-6 mb-3">
                                 <label for="nivelIA" class="form-label">Nível de IA *</label>
-                                <select class="form-select" id="nivelIA" th:field="*{nivelIA}" required>
+                                <!-- 🔧 CORREÇÃO CRÍTICA: th:value="${nivel.name()}" -->
+                                <select class="form-select"
+                                        id="nivelIA"
+                                        th:field="*{nivelIA}"
+                                        th:classappend="${#fields.hasErrors('nivelIA')} ? 'is-invalid' : ''"
+                                        required>
                                     <option value="">Selecione...</option>
                                     <option th:each="nivel : ${niveisIA}"
-                                            th:value="${nivel}"
-                                            th:text="${nivel}"></option>
+                                            th:value="${nivel.name()}"
+                                            th:text="${nivel.name()}"></option>
                                 </select>
-                                <div th:if="${#fields.hasErrors('nivelIA')}" class="text-danger">
-                                    <small th:errors="*{nivelIA}"></small>
+                                <div th:if="${#fields.hasErrors('nivelIA')}" class="invalid-feedback">
+                                    <span th:errors="*{nivelIA}"></span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a th:href="@{/colaboradores}" class="btn btn-secondary me-md-2">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">
-                                <span th:text="${colaborador.id != null} ? 'Atualizar' : 'Criar'"></span>
+                        <!-- Botões -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a th:href="@{/colaboradores}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="btnSubmit">
+                                <span th:text="${colaborador.id != null} ? '💾 Atualizar' : '➕ Criar'"></span>
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <!-- 🔧 CARD DE DEBUG (remover em produção) -->
+            <div class="card mt-3" th:if="${#fields.hasErrors('*')}">
+                <div class="card-header bg-danger text-white">
+                    ⚠️ Erros de Validação Detectados
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li th:each="err : ${#fields.detailedErrors()}" th:text="${err}"></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -96,5 +155,62 @@
 <div th:replace="fragments/footer :: footer"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 🔧 SCRIPT DE DEBUG E VALIDAÇÃO -->
+<script>
+    // Prevenir múltiplos submits
+    document.getElementById('formColaborador').addEventListener('submit', function(e) {
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Salvando...';
+
+        // Debug: mostrar dados que serão enviados
+        console.log('=== FORMULÁRIO SENDO ENVIADO ===');
+        const formData = new FormData(e.target);
+        for (let [key, value] of formData.entries()) {
+            console.log(key + ': ' + value);
+        }
+    });
+
+    // Contador de caracteres para habilidades
+    const habilidadesTextarea = document.getElementById('habilidades');
+    if (habilidadesTextarea) {
+        const maxLength = 500;
+        const counterDiv = document.createElement('small');
+        counterDiv.className = 'form-text';
+        counterDiv.id = 'charCounter';
+        habilidadesTextarea.parentNode.appendChild(counterDiv);
+
+        function updateCounter() {
+            const remaining = maxLength - habilidadesTextarea.value.length;
+            counterDiv.textContent = remaining + ' caracteres restantes';
+            if (remaining < 50) {
+                counterDiv.classList.add('text-danger');
+                counterDiv.classList.remove('text-muted');
+            } else {
+                counterDiv.classList.add('text-muted');
+                counterDiv.classList.remove('text-danger');
+            }
+        }
+
+        habilidadesTextarea.addEventListener('input', updateCounter);
+        updateCounter();
+    }
+
+    // Validação de email em tempo real
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+        emailInput.addEventListener('blur', function() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (this.value && !emailRegex.test(this.value)) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+    }
+
+    console.log('✅ Formulário de colaboradores carregado');
+</script>
 </body>
 </html>
