@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${colaborador.id != null} ? 'Editar Colaborador' : 'Novo Colaborador'">Future Work</title>
+    <title th:text="${colaborador.id} != null ? 'Editar Colaborador' : 'Novo Colaborador'">
+        Future Work
+    </title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
@@ -12,41 +16,46 @@
 <main class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
+
             <div class="card">
                 <div class="card-header">
-                    <h4 th:text="${colaborador.id != null} ? 'Editar Colaborador' : 'Novo Colaborador'"
-                        class="mb-0"></h4>
+                    <h4 class="mb-0"
+                        th:text="${colaborador.id} != null ? 'Editar Colaborador' : 'Novo Colaborador'">
+                        Novo Colaborador
+                    </h4>
                 </div>
+
                 <div class="card-body">
-                    <!-- 🔧 CORREÇÃO: Adicionar th:action e th:object corretamente -->
+                    <!-- MENSAGEM DE ERRO GERAL -->
+                    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span th:text="${erro}">Ocorreu um erro.</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <!-- FORMULÁRIO -->
                     <form th:action="@{/colaboradores/salvar}"
                           th:object="${colaborador}"
                           method="post"
-                          id="formColaborador">
+                          id="formColaborador"
+                          novalidate>
 
-                        <!-- Campo hidden para ID (importante para edição) -->
+                        <!-- ID (hidden) -->
                         <input type="hidden" th:field="*{id}" />
-
-                        <!-- 🔧 MENSAGEM DE ERRO GERAL -->
-                        <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <span th:text="${erro}"></span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
 
                         <!-- Nome -->
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome *</label>
                             <input type="text"
-                                   class="form-control"
                                    id="nome"
+                                   class="form-control"
                                    th:field="*{nome}"
-                                   th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid' : ''"
-                                   required
+                                   th:classappend="${#fields.hasErrors('nome')} ? ' is-invalid' : ''"
                                    minlength="2"
                                    maxlength="100"
+                                   required
                                    placeholder="Digite o nome completo" />
-                            <div th:if="${#fields.hasErrors('nome')}" class="invalid-feedback">
-                                <span th:errors="*{nome}"></span>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}">
+                                <span th:errors="*{nome}">Erro no nome</span>
                             </div>
                         </div>
 
@@ -54,33 +63,33 @@
                         <div class="mb-3">
                             <label for="email" class="form-label">Email *</label>
                             <input type="email"
-                                   class="form-control"
                                    id="email"
+                                   class="form-control"
                                    th:field="*{email}"
-                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                   th:classappend="${#fields.hasErrors('email')} ? ' is-invalid' : ''"
                                    required
                                    placeholder="exemplo@email.com" />
-                            <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
-                                <span th:errors="*{email}"></span>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}">
+                                <span th:errors="*{email}">Erro no email</span>
                             </div>
                         </div>
 
                         <!-- Habilidades -->
                         <div class="mb-3">
                             <label for="habilidades" class="form-label">Habilidades *</label>
-                            <textarea class="form-control"
-                                      id="habilidades"
-                                      th:field="*{habilidades}"
-                                      th:classappend="${#fields.hasErrors('habilidades')} ? 'is-invalid' : ''"
+                            <textarea id="habilidades"
+                                      class="form-control"
                                       rows="3"
-                                      required
+                                      th:field="*{habilidades}"
+                                      th:classappend="${#fields.hasErrors('habilidades')} ? ' is-invalid' : ''"
                                       maxlength="500"
+                                      required
                                       placeholder="Ex: Java, Spring Boot, Oracle, Docker"></textarea>
                             <div class="form-text">
-                                Liste as principais habilidades separadas por vírgula (máximo 500 caracteres)
+                                Liste as principais habilidades separadas por vírgula (máx. 500 caracteres).
                             </div>
-                            <div th:if="${#fields.hasErrors('habilidades')}" class="invalid-feedback">
-                                <span th:errors="*{habilidades}"></span>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('habilidades')}">
+                                <span th:errors="*{habilidades}">Erro nas habilidades</span>
                             </div>
                         </div>
 
@@ -88,66 +97,57 @@
                             <!-- Modelo de Trabalho -->
                             <div class="col-md-6 mb-3">
                                 <label for="modeloTrabalho" class="form-label">Modelo de Trabalho *</label>
-                                <!-- 🔧 CORREÇÃO CRÍTICA: th:value="${modelo.name()}" -->
-                                <select class="form-select"
-                                        id="modeloTrabalho"
+                                <select id="modeloTrabalho"
+                                        class="form-select"
                                         th:field="*{modeloTrabalho}"
-                                        th:classappend="${#fields.hasErrors('modeloTrabalho')} ? 'is-invalid' : ''"
+                                        th:classappend="${#fields.hasErrors('modeloTrabalho')} ? ' is-invalid' : ''"
                                         required>
                                     <option value="">Selecione...</option>
-                                    <option th:each="modelo : ${modelosTrabalho}"
-                                            th:value="${modelo.name()}"
-                                            th:text="${modelo.name()}"></option>
+                                    <option th:each="m : ${modelosTrabalho}"
+                                            th:value="${m}"
+                                            th:text="${m}">
+                                    </option>
                                 </select>
-                                <div th:if="${#fields.hasErrors('modeloTrabalho')}" class="invalid-feedback">
-                                    <span th:errors="*{modeloTrabalho}"></span>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('modeloTrabalho')}">
+                                    <span th:errors="*{modeloTrabalho}">Erro no modelo de trabalho</span>
                                 </div>
                             </div>
 
                             <!-- Nível de IA -->
                             <div class="col-md-6 mb-3">
                                 <label for="nivelIA" class="form-label">Nível de IA *</label>
-                                <!-- 🔧 CORREÇÃO CRÍTICA: th:value="${nivel.name()}" -->
-                                <select class="form-select"
-                                        id="nivelIA"
+                                <select id="nivelIA"
+                                        class="form-select"
                                         th:field="*{nivelIA}"
-                                        th:classappend="${#fields.hasErrors('nivelIA')} ? 'is-invalid' : ''"
+                                        th:classappend="${#fields.hasErrors('nivelIA')} ? ' is-invalid' : ''"
                                         required>
                                     <option value="">Selecione...</option>
-                                    <option th:each="nivel : ${niveisIA}"
-                                            th:value="${nivel.name()}"
-                                            th:text="${nivel.name()}"></option>
+                                    <option th:each="n : ${niveisIA}"
+                                            th:value="${n}"
+                                            th:text="${n}">
+                                    </option>
                                 </select>
-                                <div th:if="${#fields.hasErrors('nivelIA')}" class="invalid-feedback">
-                                    <span th:errors="*{nivelIA}"></span>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nivelIA')}">
+                                    <span th:errors="*{nivelIA}">Erro no nível de IA</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Botões -->
+                        <!-- BOTÕES -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                             <a th:href="@{/colaboradores}" class="btn btn-secondary me-md-2">
-                                <i class="bi bi-x-circle"></i> Cancelar
+                                Cancelar
                             </a>
                             <button type="submit" class="btn btn-primary" id="btnSubmit">
-                                <span th:text="${colaborador.id != null} ? '💾 Atualizar' : '➕ Criar'"></span>
+                                <span th:text="${colaborador.id} != null ? 'Atualizar' : 'Criar'">
+                                    Criar
+                                </span>
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- 🔧 CARD DE DEBUG (remover em produção) -->
-            <div class="card mt-3" th:if="${#fields.hasErrors('*')}">
-                <div class="card-header bg-danger text-white">
-                    ⚠️ Erros de Validação Detectados
-                </div>
-                <div class="card-body">
-                    <ul class="mb-0">
-                        <li th:each="err : ${#fields.detailedErrors()}" th:text="${err}"></li>
-                    </ul>
-                </div>
-            </div>
         </div>
     </div>
 </main>
@@ -156,61 +156,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- 🔧 SCRIPT DE DEBUG E VALIDAÇÃO -->
 <script>
-    // Prevenir múltiplos submits
-    document.getElementById('formColaborador').addEventListener('submit', function(e) {
-        const btn = document.getElementById('btnSubmit');
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Salvando...';
-
-        // Debug: mostrar dados que serão enviados
-        console.log('=== FORMULÁRIO SENDO ENVIADO ===');
-        const formData = new FormData(e.target);
-        for (let [key, value] of formData.entries()) {
-            console.log(key + ': ' + value);
-        }
-    });
-
-    // Contador de caracteres para habilidades
-    const habilidadesTextarea = document.getElementById('habilidades');
-    if (habilidadesTextarea) {
-        const maxLength = 500;
-        const counterDiv = document.createElement('small');
-        counterDiv.className = 'form-text';
-        counterDiv.id = 'charCounter';
-        habilidadesTextarea.parentNode.appendChild(counterDiv);
-
-        function updateCounter() {
-            const remaining = maxLength - habilidadesTextarea.value.length;
-            counterDiv.textContent = remaining + ' caracteres restantes';
-            if (remaining < 50) {
-                counterDiv.classList.add('text-danger');
-                counterDiv.classList.remove('text-muted');
-            } else {
-                counterDiv.classList.add('text-muted');
-                counterDiv.classList.remove('text-danger');
-            }
-        }
-
-        habilidadesTextarea.addEventListener('input', updateCounter);
-        updateCounter();
-    }
-
-    // Validação de email em tempo real
-    const emailInput = document.getElementById('email');
-    if (emailInput) {
-        emailInput.addEventListener('blur', function() {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (this.value && !emailRegex.test(this.value)) {
-                this.classList.add('is-invalid');
-            } else {
-                this.classList.remove('is-invalid');
+    // evitar clique duplo
+    const form = document.getElementById('formColaborador');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            const btn = document.getElementById('btnSubmit');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = 'Salvando...';
             }
         });
     }
-
-    console.log('✅ Formulário de colaboradores carregado');
 </script>
 </body>
 </html>

@@ -16,7 +16,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-
 @Configuration
 @EnableTransactionManagement
 public class DataBaseConfig {
@@ -38,7 +37,7 @@ public class DataBaseConfig {
     public DataSource dataSource() {
         HikariConfig hikariConfig = new HikariConfig();
 
-        // Configurações básicas
+        // Configurações básicas (SQL Server / Azure SQL)
         hikariConfig.setJdbcUrl(dbUrl);
         hikariConfig.setUsername(dbUsername);
         hikariConfig.setPassword(dbPassword);
@@ -47,21 +46,17 @@ public class DataBaseConfig {
         // Pool de conexões
         hikariConfig.setMaximumPoolSize(10);
         hikariConfig.setMinimumIdle(5);
-        hikariConfig.setConnectionTimeout(30000); // 30 segundos
-        hikariConfig.setIdleTimeout(600000); // 10 minutos
-        hikariConfig.setMaxLifetime(1800000); // 30 minutos
+        hikariConfig.setConnectionTimeout(30_000);   // 30 segundos
+        hikariConfig.setIdleTimeout(600_000);        // 10 minutos
+        hikariConfig.setMaxLifetime(1_800_000);      // 30 minutos
 
-        // Configurações de performance
-        hikariConfig.setConnectionTestQuery("SELECT 1 FROM DUAL");
+        // Teste de conexão compatível com SQL Server (SEM DUAL)
+        hikariConfig.setConnectionTestQuery("SELECT 1");
+
         hikariConfig.setPoolName("FutureWorkHikariPool");
 
-        // Propriedades Oracle específicas
-        hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
-        hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
-        hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-
-        // Logs de conexão (desabilite em produção)
-        hikariConfig.setLeakDetectionThreshold(60000); // 1 minuto
+        // Logs de conexão (desabilitar em produção se não precisar)
+        hikariConfig.setLeakDetectionThreshold(60_000); // 1 minuto
 
         return new HikariDataSource(hikariConfig);
     }
@@ -82,10 +77,11 @@ public class DataBaseConfig {
     private Properties hibernateProperties() {
         Properties properties = new Properties();
 
-        // Dialeto Oracle
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle12cDialect");
+        // Dialeto do SQL Server (Azure SQL)
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.SQLServer2012Dialect");
 
-        // DDL Auto (update, validate, create, create-drop, none)
+        // Cuidado: "update" mexe no schema.
+        // Mantive igual ao seu; se quiser travar em produção, troque para "validate" ou "none".
         properties.setProperty("hibernate.hbm2ddl.auto", "update");
 
         // Logs SQL
@@ -99,13 +95,11 @@ public class DataBaseConfig {
         properties.setProperty("hibernate.order_updates", "true");
         properties.setProperty("hibernate.jdbc.batch_versioned_data", "true");
 
-        // Cache de segundo nível (opcional)
-        // properties.setProperty("hibernate.cache.use_second_level_cache", "true");
-        // properties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.jcache.JCacheRegionFactory");
-
         // Naming strategy
-        properties.setProperty("hibernate.physical_naming_strategy",
-                "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl");
+        properties.setProperty(
+                "hibernate.physical_naming_strategy",
+                "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"
+        );
 
         return properties;
     }
